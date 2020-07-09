@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.EventsInfoMapper">
+  <resultMap id="BaseResultMap" type="com.bean.EventsInfo">
+    <id column="event_id" jdbcType="INTEGER" property="eventId" />
+    <result column="event_cate" jdbcType="INTEGER" property="eventCate" />
+    <result column="event_start_time" jdbcType="TIMESTAMP" property="eventStartTime" />
+    <result column="event_country" jdbcType="VARCHAR" property="eventCountry" />
+    <result column="event_update_time" jdbcType="TIMESTAMP" property="eventUpdateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.bean.EventsInfoWithBLOBs">
+    <result column="event_title" jdbcType="LONGVARCHAR" property="eventTitle" />
+    <result column="event_dis" jdbcType="LONGVARCHAR" property="eventDis" />
+    <result column="event_vec" jdbcType="LONGVARCHAR" property="eventVec" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    event_id, event_cate, event_start_time, event_country, event_update_time,DATE_FORMAT(event_update_time,'%Y-%m-%d')event_update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    event_title, event_dis, event_vec
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.bean.EventsInfoExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from events_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.bean.EventsInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from events_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from events_info
+    where event_id = #{eventId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from events_info
+    where event_id = #{eventId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bean.EventsInfoExample">
+    delete from events_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bean.EventsInfoWithBLOBs">
+    insert into events_info (event_id, event_cate, event_start_time, 
+      event_country, event_update_time, event_title, 
+      event_dis, event_vec)
+    values (#{eventId,jdbcType=INTEGER}, #{eventCate,jdbcType=INTEGER}, #{eventStartTime,jdbcType=TIMESTAMP}, 
+      #{eventCountry,jdbcType=VARCHAR}, #{eventUpdateTime,jdbcType=TIMESTAMP}, #{eventTitle,jdbcType=LONGVARCHAR}, 
+      #{eventDis,jdbcType=LONGVARCHAR}, #{eventVec,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bean.EventsInfoWithBLOBs">
+    insert into events_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eventId != null">
+        event_id,
+      </if>
+      <if test="eventCate != null">
+        event_cate,
+      </if>
+      <if test="eventStartTime != null">
+        event_start_time,
+      </if>
+      <if test="eventCountry != null">
+        event_country,
+      </if>
+      <if test="eventUpdateTime != null">
+        event_update_time,
+      </if>
+      <if test="eventTitle != null">
+        event_title,
+      </if>
+      <if test="eventDis != null">
+        event_dis,
+      </if>
+      <if test="eventVec != null">
+        event_vec,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eventId != null">
+        #{eventId,jdbcType=INTEGER},
+      </if>
+      <if test="eventCate != null">
+        #{eventCate,jdbcType=INTEGER},
+      </if>
+      <if test="eventStartTime != null">
+        #{eventStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventCountry != null">
+        #{eventCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="eventUpdateTime != null">
+        #{eventUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventTitle != null">
+        #{eventTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eventDis != null">
+        #{eventDis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eventVec != null">
+        #{eventVec,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bean.EventsInfoExample" resultType="java.lang.Long">
+    select count(*) from events_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update events_info
+    <set>
+      <if test="record.eventId != null">
+        event_id = #{record.eventId,jdbcType=INTEGER},
+      </if>
+      <if test="record.eventCate != null">
+        event_cate = #{record.eventCate,jdbcType=INTEGER},
+      </if>
+      <if test="record.eventStartTime != null">
+        event_start_time = #{record.eventStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.eventCountry != null">
+        event_country = #{record.eventCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eventUpdateTime != null">
+        event_update_time = #{record.eventUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.eventTitle != null">
+        event_title = #{record.eventTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.eventDis != null">
+        event_dis = #{record.eventDis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.eventVec != null">
+        event_vec = #{record.eventVec,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update events_info
+    set event_id = #{record.eventId,jdbcType=INTEGER},
+      event_cate = #{record.eventCate,jdbcType=INTEGER},
+      event_start_time = #{record.eventStartTime,jdbcType=TIMESTAMP},
+      event_country = #{record.eventCountry,jdbcType=VARCHAR},
+      event_update_time = #{record.eventUpdateTime,jdbcType=TIMESTAMP},
+      event_title = #{record.eventTitle,jdbcType=LONGVARCHAR},
+      event_dis = #{record.eventDis,jdbcType=LONGVARCHAR},
+      event_vec = #{record.eventVec,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update events_info
+    set event_id = #{record.eventId,jdbcType=INTEGER},
+      event_cate = #{record.eventCate,jdbcType=INTEGER},
+      event_start_time = #{record.eventStartTime,jdbcType=TIMESTAMP},
+      event_country = #{record.eventCountry,jdbcType=VARCHAR},
+      event_update_time = #{record.eventUpdateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bean.EventsInfoWithBLOBs">
+    update events_info
+    <set>
+      <if test="eventCate != null">
+        event_cate = #{eventCate,jdbcType=INTEGER},
+      </if>
+      <if test="eventStartTime != null">
+        event_start_time = #{eventStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventCountry != null">
+        event_country = #{eventCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="eventUpdateTime != null">
+        event_update_time = #{eventUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventTitle != null">
+        event_title = #{eventTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eventDis != null">
+        event_dis = #{eventDis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eventVec != null">
+        event_vec = #{eventVec,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where event_id = #{eventId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bean.EventsInfoWithBLOBs">
+    update events_info
+    set event_cate = #{eventCate,jdbcType=INTEGER},
+      event_start_time = #{eventStartTime,jdbcType=TIMESTAMP},
+      event_country = #{eventCountry,jdbcType=VARCHAR},
+      event_update_time = #{eventUpdateTime,jdbcType=TIMESTAMP},
+      event_title = #{eventTitle,jdbcType=LONGVARCHAR},
+      event_dis = #{eventDis,jdbcType=LONGVARCHAR},
+      event_vec = #{eventVec,jdbcType=LONGVARCHAR}
+    where event_id = #{eventId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bean.EventsInfo">
+    update events_info
+    set event_cate = #{eventCate,jdbcType=INTEGER},
+      event_start_time = #{eventStartTime,jdbcType=TIMESTAMP},
+      event_country = #{eventCountry,jdbcType=VARCHAR},
+      event_update_time = #{eventUpdateTime,jdbcType=TIMESTAMP}
+    where event_id = #{eventId,jdbcType=INTEGER}
+  </update>
+</mapper>

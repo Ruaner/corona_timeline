@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.NewsInfoMapper">
+  <resultMap id="BaseResultMap" type="com.bean.NewsInfo">
+    <id column="news_id" jdbcType="INTEGER" property="newsId" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="news_up_time" jdbcType="VARCHAR" property="newsUpTime" />
+    <result column="news_media_name" jdbcType="VARCHAR" property="newsMediaName" />
+    <result column="news_topics" jdbcType="VARCHAR" property="newsTopics" />
+    <result column="news_media_id" jdbcType="INTEGER" property="newsMediaId" />
+    <result column="news_country" jdbcType="VARCHAR" property="newsCountry" />
+    <result column="news_cate" jdbcType="VARCHAR" property="newsCate" />
+    <result column="event_id" jdbcType="VARCHAR" property="eventId" />
+    <result column="news_attitude" jdbcType="INTEGER" property="newsAttitude" />
+    <result column="news_atti_score" jdbcType="REAL" property="newsAttiScore" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.bean.NewsInfoWithBLOBs">
+    <result column="news_text" jdbcType="LONGVARCHAR" property="newsText" />
+    <result column="news_url" jdbcType="LONGVARCHAR" property="newsUrl" />
+    <result column="news_abstract" jdbcType="LONGVARCHAR" property="newsAbstract" />
+    <result column="news_original" jdbcType="LONGVARCHAR" property="newsOriginal" />
+  </resultMap>
+
+  <select id="getMediaInfoByEventId" resultType="com.bean.NewsInfoWithBLOBs">
+    select news_info.*
+    from news_info
+    where event_id = #{eventId}
+
+  </select>
+
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    news_id, news_title, news_up_time,DATE_FORMAT(news_up_time,'%Y-%m-%d')news_up_time, news_media_name, news_topics, news_media_id, news_country,
+    news_cate, event_id, news_attitude, news_atti_score
+  </sql>
+  <sql id="Blob_Column_List">
+    news_text, news_url, news_abstract, news_original
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.bean.NewsInfoExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from news_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.bean.NewsInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from news_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from news_info
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from news_info
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bean.NewsInfoExample">
+    delete from news_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bean.NewsInfoWithBLOBs">
+    insert into news_info (news_id, news_title, news_up_time, 
+      news_media_name, news_topics, news_media_id, 
+      news_country, news_cate, event_id, 
+      news_attitude, news_atti_score, news_text, 
+      news_url, news_abstract, news_original
+      )
+    values (#{newsId,jdbcType=INTEGER}, #{newsTitle,jdbcType=VARCHAR}, #{newsUpTime,jdbcType=VARCHAR}, 
+      #{newsMediaName,jdbcType=VARCHAR}, #{newsTopics,jdbcType=VARCHAR}, #{newsMediaId,jdbcType=INTEGER}, 
+      #{newsCountry,jdbcType=VARCHAR}, #{newsCate,jdbcType=VARCHAR}, #{eventId,jdbcType=VARCHAR}, 
+      #{newsAttitude,jdbcType=INTEGER}, #{newsAttiScore,jdbcType=REAL}, #{newsText,jdbcType=LONGVARCHAR}, 
+      #{newsUrl,jdbcType=LONGVARCHAR}, #{newsAbstract,jdbcType=LONGVARCHAR}, #{newsOriginal,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.bean.NewsInfoWithBLOBs">
+    insert into news_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="newsId != null">
+        news_id,
+      </if>
+      <if test="newsTitle != null">
+        news_title,
+      </if>
+      <if test="newsUpTime != null">
+        news_up_time,
+      </if>
+      <if test="newsMediaName != null">
+        news_media_name,
+      </if>
+      <if test="newsTopics != null">
+        news_topics,
+      </if>
+      <if test="newsMediaId != null">
+        news_media_id,
+      </if>
+      <if test="newsCountry != null">
+        news_country,
+      </if>
+      <if test="newsCate != null">
+        news_cate,
+      </if>
+      <if test="eventId != null">
+        event_id,
+      </if>
+      <if test="newsAttitude != null">
+        news_attitude,
+      </if>
+      <if test="newsAttiScore != null">
+        news_atti_score,
+      </if>
+      <if test="newsText != null">
+        news_text,
+      </if>
+      <if test="newsUrl != null">
+        news_url,
+      </if>
+      <if test="newsAbstract != null">
+        news_abstract,
+      </if>
+      <if test="newsOriginal != null">
+        news_original,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="newsId != null">
+        #{newsId,jdbcType=INTEGER},
+      </if>
+      <if test="newsTitle != null">
+        #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsUpTime != null">
+        #{newsUpTime,jdbcType=VARCHAR},
+      </if>
+      <if test="newsMediaName != null">
+        #{newsMediaName,jdbcType=VARCHAR},
+      </if>
+      <if test="newsTopics != null">
+        #{newsTopics,jdbcType=VARCHAR},
+      </if>
+      <if test="newsMediaId != null">
+        #{newsMediaId,jdbcType=INTEGER},
+      </if>
+      <if test="newsCountry != null">
+        #{newsCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="newsCate != null">
+        #{newsCate,jdbcType=VARCHAR},
+      </if>
+      <if test="eventId != null">
+        #{eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="newsAttitude != null">
+        #{newsAttitude,jdbcType=INTEGER},
+      </if>
+      <if test="newsAttiScore != null">
+        #{newsAttiScore,jdbcType=REAL},
+      </if>
+      <if test="newsText != null">
+        #{newsText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsUrl != null">
+        #{newsUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsAbstract != null">
+        #{newsAbstract,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsOriginal != null">
+        #{newsOriginal,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bean.NewsInfoExample" resultType="java.lang.Long">
+    select count(*) from news_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update news_info
+    <set>
+      <if test="record.newsId != null">
+        news_id = #{record.newsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsTitle != null">
+        news_title = #{record.newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsUpTime != null">
+        news_up_time = #{record.newsUpTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsMediaName != null">
+        news_media_name = #{record.newsMediaName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsTopics != null">
+        news_topics = #{record.newsTopics,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsMediaId != null">
+        news_media_id = #{record.newsMediaId,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsCountry != null">
+        news_country = #{record.newsCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsCate != null">
+        news_cate = #{record.newsCate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eventId != null">
+        event_id = #{record.eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsAttitude != null">
+        news_attitude = #{record.newsAttitude,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsAttiScore != null">
+        news_atti_score = #{record.newsAttiScore,jdbcType=REAL},
+      </if>
+      <if test="record.newsText != null">
+        news_text = #{record.newsText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.newsUrl != null">
+        news_url = #{record.newsUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.newsAbstract != null">
+        news_abstract = #{record.newsAbstract,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.newsOriginal != null">
+        news_original = #{record.newsOriginal,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update news_info
+    set news_id = #{record.newsId,jdbcType=INTEGER},
+      news_title = #{record.newsTitle,jdbcType=VARCHAR},
+      news_up_time = #{record.newsUpTime,jdbcType=VARCHAR},
+      news_media_name = #{record.newsMediaName,jdbcType=VARCHAR},
+      news_topics = #{record.newsTopics,jdbcType=VARCHAR},
+      news_media_id = #{record.newsMediaId,jdbcType=INTEGER},
+      news_country = #{record.newsCountry,jdbcType=VARCHAR},
+      news_cate = #{record.newsCate,jdbcType=VARCHAR},
+      event_id = #{record.eventId,jdbcType=VARCHAR},
+      news_attitude = #{record.newsAttitude,jdbcType=INTEGER},
+      news_atti_score = #{record.newsAttiScore,jdbcType=REAL},
+      news_text = #{record.newsText,jdbcType=LONGVARCHAR},
+      news_url = #{record.newsUrl,jdbcType=LONGVARCHAR},
+      news_abstract = #{record.newsAbstract,jdbcType=LONGVARCHAR},
+      news_original = #{record.newsOriginal,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update news_info
+    set news_id = #{record.newsId,jdbcType=INTEGER},
+      news_title = #{record.newsTitle,jdbcType=VARCHAR},
+      news_up_time = #{record.newsUpTime,jdbcType=VARCHAR},
+      news_media_name = #{record.newsMediaName,jdbcType=VARCHAR},
+      news_topics = #{record.newsTopics,jdbcType=VARCHAR},
+      news_media_id = #{record.newsMediaId,jdbcType=INTEGER},
+      news_country = #{record.newsCountry,jdbcType=VARCHAR},
+      news_cate = #{record.newsCate,jdbcType=VARCHAR},
+      event_id = #{record.eventId,jdbcType=VARCHAR},
+      news_attitude = #{record.newsAttitude,jdbcType=INTEGER},
+      news_atti_score = #{record.newsAttiScore,jdbcType=REAL}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bean.NewsInfoWithBLOBs">
+    update news_info
+    <set>
+      <if test="newsTitle != null">
+        news_title = #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsUpTime != null">
+        news_up_time = #{newsUpTime,jdbcType=VARCHAR},
+      </if>
+      <if test="newsMediaName != null">
+        news_media_name = #{newsMediaName,jdbcType=VARCHAR},
+      </if>
+      <if test="newsTopics != null">
+        news_topics = #{newsTopics,jdbcType=VARCHAR},
+      </if>
+      <if test="newsMediaId != null">
+        news_media_id = #{newsMediaId,jdbcType=INTEGER},
+      </if>
+      <if test="newsCountry != null">
+        news_country = #{newsCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="newsCate != null">
+        news_cate = #{newsCate,jdbcType=VARCHAR},
+      </if>
+      <if test="eventId != null">
+        event_id = #{eventId,jdbcType=VARCHAR},
+      </if>
+      <if test="newsAttitude != null">
+        news_attitude = #{newsAttitude,jdbcType=INTEGER},
+      </if>
+      <if test="newsAttiScore != null">
+        news_atti_score = #{newsAttiScore,jdbcType=REAL},
+      </if>
+      <if test="newsText != null">
+        news_text = #{newsText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsUrl != null">
+        news_url = #{newsUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsAbstract != null">
+        news_abstract = #{newsAbstract,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newsOriginal != null">
+        news_original = #{newsOriginal,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bean.NewsInfoWithBLOBs">
+    update news_info
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_up_time = #{newsUpTime,jdbcType=VARCHAR},
+      news_media_name = #{newsMediaName,jdbcType=VARCHAR},
+      news_topics = #{newsTopics,jdbcType=VARCHAR},
+      news_media_id = #{newsMediaId,jdbcType=INTEGER},
+      news_country = #{newsCountry,jdbcType=VARCHAR},
+      news_cate = #{newsCate,jdbcType=VARCHAR},
+      event_id = #{eventId,jdbcType=VARCHAR},
+      news_attitude = #{newsAttitude,jdbcType=INTEGER},
+      news_atti_score = #{newsAttiScore,jdbcType=REAL},
+      news_text = #{newsText,jdbcType=LONGVARCHAR},
+      news_url = #{newsUrl,jdbcType=LONGVARCHAR},
+      news_abstract = #{newsAbstract,jdbcType=LONGVARCHAR},
+      news_original = #{newsOriginal,jdbcType=LONGVARCHAR}
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bean.NewsInfo">
+    update news_info
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_up_time = #{newsUpTime,jdbcType=VARCHAR},
+      news_media_name = #{newsMediaName,jdbcType=VARCHAR},
+      news_topics = #{newsTopics,jdbcType=VARCHAR},
+      news_media_id = #{newsMediaId,jdbcType=INTEGER},
+      news_country = #{newsCountry,jdbcType=VARCHAR},
+      news_cate = #{newsCate,jdbcType=VARCHAR},
+      event_id = #{eventId,jdbcType=VARCHAR},
+      news_attitude = #{newsAttitude,jdbcType=INTEGER},
+      news_atti_score = #{newsAttiScore,jdbcType=REAL}
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+</mapper>

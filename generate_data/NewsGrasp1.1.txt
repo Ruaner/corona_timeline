@@ -1,0 +1,78 @@
+import random
+import time
+import newspaper
+import pandas as pd
+import pymysql
+
+# ������ַ����
+paper_test = ['https://www.foxnews.com/media/tim-scott-liberal-democrats-sending-racist-messages'
+              , 'https://news.cgtn.com/news/2020-06-30/The-forgotten-indigenous-peoples-in-COVID-19-pandemic-RKrRAiIeJy/index.html']
+#�������ݿ�
+connect = pymysql.connect(
+    host='39.97.176.70',
+    user='root',
+    password='password',
+    database='test_timeline',
+    charset='utf8')
+# ��ȡ�α�
+cursor=connect.cursor()
+class news():
+    def __init__(self):
+        #����¼��csv�ļ����в���
+        self.CsvFileName = "newspaper20200701.csv"
+        self.CsvData=[]
+
+    # Paper:����Դ�����з���վ ��������:�б�
+    # media:ý������    �������ͣ��ַ���
+    def getInfo(self, Paper, media, media_id, country):
+        for paper in Paper.articles:
+            try:
+                time.sleep(random.random()*3)  # ��ͣ0~3�룬ʱ�����䣺[0,1)
+                url = paper.url
+                article = newspaper.Article(url, language='en')  # ��������
+                article.download()  # ������ҳ
+                article.parse()
+                article.nlp()
+                # title = ['���ű���', '����ʱ��', '�����ı�','����url','����ժҪ','���Źؼ���']
+                # self.CsvData.append([article.title, article.publish_date, article.text, url, article.summary, article.keywords])
+                sql = "INSERT INTO news_info(news_title,\
+                                    news_up_time,news_text,news_url,news_abstract,news_topics,news_media_name,news_media_id,news_country) \
+                                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+
+                # �ж��Ƿ�������������Ĺؼ���
+                for keyword in article.keywords:
+                    if keyword == 'coronvirus' or keyword == 'covid19':
+                        news_topics = ",".join(map(str,article.keywords))
+                        #�������ݿ�
+                        news_data = (article.title, article.publish_date, article.text, url, article.summary, news_topics, media, media_id, country)
+                        cursor.execute(sql, news_data)
+                        connect.commit()
+                        # test = pd.DataFrame(columns=title, data=self.CsvData)
+                        # test.to_csv( self.CsvFileName, mode='a', encoding='UTF-8')
+                        print("�������ݳɹ���")
+            except Exception:
+                print("�Ƿ����룬ʧЧ�򲻺��ؼ���")
+
+news1 = news()
+#��������Դ����ȡ����,ע��˴�ԭ�е�url���Ѿ����浽������޸�Ϊȡ������
+id = 1
+print("***************************cnn************************************")
+Paper = newspaper.build('https://us.cnn.com/',language='en', memoize_articles = False)
+news1.getInfo(Paper,media='USnews',media_id=id,country='America')
+id = 2
+print("***************************foxnews************************************")
+Paper = newspaper.build('https://www.foxnews.com/')
+news1.getInfo(Paper,media='Foxnews',media_id=id,country='America')
+id = 4
+# print("*****************************usnews**********************************")
+# Paper = newspaper.build('https://www.usnews.com/')
+# news1.getInfo(Paper,media='USnews',media_id=id,country='Britain')
+id = 5
+print("*****************************cgtn**********************************")
+Paper = newspaper.build('https://www.cgtn.com/')
+news1.getInfo(Paper,media='CGTN',media_id=id,country='China')
+id = 7
+Paper = newspaper.build('http://www.xinhuanet.com/english/')
+news1.getInfo(Paper,media='Xinhua',media_id=id,country='China')
+cursor.close()
+connect.close()

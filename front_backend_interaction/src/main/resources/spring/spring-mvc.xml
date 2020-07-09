@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!--spring mvc配置-->
+    <!--在指定包下扫描注解-->
+    <context:component-scan base-package="com.controller"/>
+    <!--注解驱动-->
+    <mvc:annotation-driven/>
+    <!--开启静态资源解析-->
+    <mvc:default-servlet-handler/>
+    <!--设定前后缀-->
+    <!-- Jsp视图解析器 -->
+    <bean id="jspViewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="order" value="1" />
+        <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView" />
+        <property name="prefix" value="/jsp/" />
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!-- 配置处理适配器 Controller类里面@responseBody方法的返回值都需要经过消息转换器-->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <!-- 处理解决@ResponseBody返回中文乱码情况 -->
+                <bean
+                        class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html;charset=UTF-8</value>
+                            <value>text/plain;charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <!-- 处理解决后台list、map转换json数据问题 -->
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+            </list>
+        </property>
+        <!-- 日期格式转换  自定义类继承 webBindingInitializer接口-->
+<!--        <property name="webBindingInitializer">-->
+<!--            <bean class="com.qly.b2b.web.common.DateConverter" />-->
+<!--        </property>-->
+    </bean>
+
+
+    <!-- 开启SpringMVC高级模式 -->
+    <mvc:annotation-driven />
+    <!-- 放行静态资源访问 -->
+<!--    <mvc:default-servlet-handler />-->
+
+</beans>
